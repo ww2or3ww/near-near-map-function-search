@@ -18,7 +18,7 @@ def lambda_handler(event, context):
         url = "{0}/2013-01-01/search?".format(API_ADDRESS_CLOUDSEARCH)
         #urlPrm = "q={0}".format(types) + "&expr.distance=haversin({0},latlon.latitude,latlon.longitude)&return=distance,".format(latlon)
         urlPrm = "q={0}&q.options={{fields:['type']}}".format(types) + "&expr.distance=haversin({0},latlon.latitude,latlon.longitude)&return=distance,".format(latlon)
-        urlField = "type,title,tel,address,latlon,image,candelivery,needreservation,candrivethru,cantakeout,facebook,twitter,instagram,homepage"
+        urlField = "type,title,tel,address,latlon,image,candelivery,reservation,media,candrivethru,cantakeout,facebook,twitter,instagram,homepage"
         urlEtc = "&sort=distance%20asc&size=10"
         url = url + urlPrm + urlField + urlEtc
         logger.info(url)
@@ -49,14 +49,20 @@ def lambda_handler(event, context):
                 tmp["homepage"] = mark["fields"]["homepage"]
             if "media" in mark["fields"]:
                 tmp["media"] = mark["fields"]["media"]
-            if "needreservation" in mark["fields"]:
-                tmp["needReservation"] = True if int(mark["fields"]["needreservation"]) == 1 else False
+            if "reservation" in mark["fields"]:
+                tmp["reservation"] = int(mark["fields"]["reservation"])
             if "candelivery" in mark["fields"]:
                 tmp["canDelivery"] = True if int(mark["fields"]["candelivery"]) == 1 else False
+            else:
+                tmp["canDelivery"] = False
             if "cantakeout" in mark["fields"]:
                 tmp["canTakeout"] = True if int(mark["fields"]["cantakeout"]) == 1 else False
+            else:
+                tmp["canTakeout"] = False
             if "candrivethru" in mark["fields"]:
                 tmp["canDriveThru"] = True if int(mark["fields"]["candrivethru"]) == 1 else False
+            else:
+                tmp["canDriveThru"] = False
             
             result.append(tmp)
 
