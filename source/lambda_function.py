@@ -19,7 +19,7 @@ def lambda_handler(event, context):
         #urlPrm = "q={0}".format(types) + "&expr.distance=haversin({0},latlon.latitude,latlon.longitude)&return=distance,".format(latlon)
         urlPrm = "q={0}&q.options={{fields:['type']}}".format(types) + "&expr.distance=haversin({0},latlon.latitude,latlon.longitude)&return=distance,".format(latlon)
         urlField = "type,title,tel,address,latlon,image,candelivery,reservation,candrivethru,cantakeout,facebook,twitter,instagram,homepage,media,media1,media2,media3,media4,media5"
-        urlEtc = "&sort=distance asc &size=10"
+        urlEtc = "&sort=distance asc &size=15"
         url = url + urlPrm + urlField + urlEtc
         logger.info(url)
         
@@ -33,6 +33,7 @@ def lambda_handler(event, context):
         for mark in hits:
             tmp = {}
             latlon = mark["fields"]["latlon"].split(",")
+            tmp["type"] = types
             tmp["position"] = { "lat": float(latlon[0]), "lng": float(latlon[1]) }
             tmp["title"] = mark["fields"]["title"]
             tmp["tel"] = mark["fields"]["tel"]
