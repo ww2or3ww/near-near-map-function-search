@@ -18,8 +18,8 @@ def lambda_handler(event, context):
         url = "{0}/2013-01-01/search?".format(API_ADDRESS_CLOUDSEARCH)
         #urlPrm = "q={0}".format(types) + "&expr.distance=haversin({0},latlon.latitude,latlon.longitude)&return=distance,".format(latlon)
         urlPrm = "q={0}&q.options={{fields:['type']}}".format(types) + "&expr.distance=haversin({0},latlon.latitude,latlon.longitude)&return=distance,".format(latlon)
-        urlField = "type,title,tel,address,latlon,image,candelivery,reservation,media,candrivethru,cantakeout,facebook,twitter,instagram,homepage"
-        urlEtc = "&sort=distance%20asc&size=10"
+        urlField = "type,title,tel,address,latlon,image,candelivery,reservation,candrivethru,cantakeout,facebook,twitter,instagram,homepage,media,media1,media2,media3,media4,media5"
+        urlEtc = "&sort=distance asc &size=15"
         url = url + urlPrm + urlField + urlEtc
         logger.info(url)
         
@@ -33,10 +33,12 @@ def lambda_handler(event, context):
         for mark in hits:
             tmp = {}
             latlon = mark["fields"]["latlon"].split(",")
+            tmp["type"] = types
             tmp["position"] = { "lat": float(latlon[0]), "lng": float(latlon[1]) }
             tmp["title"] = mark["fields"]["title"]
             tmp["tel"] = mark["fields"]["tel"]
             tmp["address"] = mark["fields"]["address"]
+            
             if "image" in mark["fields"]:
                 tmp["image"] = urljoin("https://near-near-map.s3-ap-northeast-1.amazonaws.com/", mark["fields"]["image"])
             if "facebook" in mark["fields"]:
@@ -47,10 +49,9 @@ def lambda_handler(event, context):
                 tmp["instagram"] = mark["fields"]["instagram"]
             if "homepage" in mark["fields"]:
                 tmp["homepage"] = mark["fields"]["homepage"]
-            if "media" in mark["fields"]:
-                tmp["media"] = mark["fields"]["media"]
             if "reservation" in mark["fields"]:
                 tmp["reservation"] = int(mark["fields"]["reservation"])
+                
             if "candelivery" in mark["fields"]:
                 tmp["canDelivery"] = True if int(mark["fields"]["candelivery"]) == 1 else False
             else:
@@ -63,6 +64,20 @@ def lambda_handler(event, context):
                 tmp["canDriveThru"] = True if int(mark["fields"]["candrivethru"]) == 1 else False
             else:
                 tmp["canDriveThru"] = False
+                
+            if "media" in mark["fields"]:
+                tmp["media"] = mark["fields"]["media"]
+            if "media1" in mark["fields"]:
+                tmp["media1"] = mark["fields"]["media1"]
+                tmp["media"] = mark["fields"]["media1"]
+            if "media2" in mark["fields"]:
+                tmp["media2"] = mark["fields"]["media2"]
+            if "media3" in mark["fields"]:
+                tmp["media3"] = mark["fields"]["media3"]
+            if "media4" in mark["fields"]:
+                tmp["media4"] = mark["fields"]["media4"]
+            if "media5" in mark["fields"]:
+                tmp["media5"] = mark["fields"]["media5"]
             
             result.append(tmp)
 
