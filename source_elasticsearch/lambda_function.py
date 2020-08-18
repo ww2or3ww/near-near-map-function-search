@@ -11,7 +11,6 @@ import requests
 from urllib.parse import urljoin
 
 from elasticsearch import Elasticsearch, RequestsHttpConnection
-from requests_aws4auth import AWS4Auth
 
 import logging
 logger = logging.getLogger()
