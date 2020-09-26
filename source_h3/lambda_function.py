@@ -18,11 +18,11 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+DYNAMODB_NAME               = ""    if("DYNAMODB_NAME" not in os.environ)           else os.environ["DYNAMODB_NAME"]
 LOCOGUIDE_API_ADDRESS       = ""    if("LOCOGUIDE_API_ADDRESS" not in os.environ)   else os.environ["LOCOGUIDE_API_ADDRESS"]
 LOCOGUIDE_API_TOKEN         = ""    if("LOCOGUIDE_API_TOKEN" not in os.environ)     else os.environ["LOCOGUIDE_API_TOKEN"]
 RESULT_COUNT_MAX            = 100
 
-DYNAMODB_NAME               = "near-near-map-h3"
 DYNAMO_TABLE = boto3.resource("dynamodb").Table(DYNAMODB_NAME)
 
 def lambda_handler(event, context):
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
         zoom = int(event["queryStringParameters"]["zoom"])
         logger.info("type={0}, latlon={1}, zoom={2}".format(types, latlon, zoom))
 
-        hits = search2(types, latlon, zoom)
+        hits = search_h3(types, latlon, zoom)
 
         result = {}
         has_clowd = False
@@ -80,7 +80,7 @@ def lambda_handler(event, context):
             "body": "error"
         }
 
-def search2(types, latlon, zoom):
+def search_h3(types, latlon, zoom):
     if zoom <= 13:
         h3type = 7
     elif zoom >= 14 and zoom <= 15:
@@ -98,7 +98,7 @@ def search2(types, latlon, zoom):
         for h3index in sdata:
             response = query_dynamodb(types, h3index, h3type)
             results.extend(response)
-        if len(results) > 100:
+        if len(results) >= RESULT_COUNT_MAX:
             break
     logger.info("result size = {0}".format(len(results)))
 
