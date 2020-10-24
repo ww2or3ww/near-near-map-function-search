@@ -124,13 +124,13 @@ def query_dynamodb(types, h3index, h3type):
         indexstr = "LSI_type_h3-{0}".format(h3type)
         response = DYNAMO_TABLE.query(
             IndexName=indexstr,
-            KeyConditionExpression=Key("type").eq(types) & Key(keystr).begins_with(h3index)
+            KeyConditionExpression=Key("type").eq(types) & Key(keystr).eq(h3index)
         )
         result_list = response["Items"]
         while "LastEvaluatedKey" in response:	
             response = DYNAMO_TABLE.query(
                 IndexName=indexstr,	
-                KeyConditionExpression=Key("type").eq(types) & Key(keystr).begins_with(h3index),	
+                KeyConditionExpression=Key("type").eq(types) & Key(keystr).eq(h3index),	
                 ExclusiveStartKey = response["LastEvaluatedKey"])	
             result_list.extend(response["Items"])
             break
