@@ -221,6 +221,7 @@ def convert(types, item):
     data["position"] = { "lat": float(latlon[0]), "lng": float(latlon[1]) }
     
     child = {}
+    child["guid"] = item["h3-9"]
     child["title"] = item["title"]
     child["tel"] = item["tel"]
     child["address"] = item["address"]
