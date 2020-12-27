@@ -44,7 +44,8 @@ def lambda_handler(event, context):
         index = 0
         for item in hits:
             data = convert(types, item)
-            if item["locoguide_id"]:
+            
+            if "locoguide_id" in item and item["locoguide_id"]:
                 data["list"][0]["locoguide_id"] = item["locoguide_id"]
                 data["list"][0]["crowd_lv"] = 0
                 locolist.append(data["list"][0])
@@ -174,6 +175,7 @@ def requestLoco(url, page, idList, lvList):
     jsn = json.loads(content)
     
     logger.info("list size = " + str(len(jsn)))
+    logger.info(jsn)
 
     has_clowd = False
     for tmp in jsn:
